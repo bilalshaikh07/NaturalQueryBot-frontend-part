@@ -1,0 +1,72 @@
+<div class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 chat-card">
+    <div class="card-header bg-gradient-primary text-white d-flex align-items-center justify-content-between">
+      <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i> Chat with ME</h5>
+      <span class="badge bg-light text-dark">Online</span>
+    </div>
+
+    <div class="card-body chat-body px-4 py-3" #chatContainer style="height: 400px; overflow-y: auto;">
+      <div *ngFor="let msg of messages" class="mb-4">
+        <!-- USER message -->
+        <div *ngIf="msg.sender === 'user'" class="d-flex justify-content-end">
+          <div class="message-bubble user-msg text-end shadow-sm">
+            {{ msg.text }}
+          </div>
+        </div>
+
+        <!-- BOT message -->
+        <div *ngIf="msg.sender === 'bot'" class="d-flex align-items-start">
+          <div class="avatar me-2">
+            <img src="https://i.pravatar.cc/40?img=3" class="rounded-circle" width="32" height="32" alt="Bot" />
+          </div>
+          <div class="message-bubble bot-msg shadow-sm">
+            <div *ngIf="msg.text">{{ msg.text }}</div>
+
+            <div *ngIf="msg.rowsCount !== undefined" class="mt-2">
+              <strong>Total Rows:</strong> {{ msg.rowsCount }}
+            </div>
+
+            <div *ngIf="msg.data?.length" class="table-responsive mt-3">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th *ngFor="let key of objectKeys(msg.data[0])">{{ key }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of msg.data">
+                    <td *ngFor="let key of objectKeys(row)">{{ row[key] }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loader -->
+      <div *ngIf="loading" class="text-center text-muted">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+        <small class="ms-2">Thinking...</small>
+      </div>
+    </div>
+
+    <div class="card-footer border-0 bg-light">
+      <form (submit)="sendMessage(); $event.preventDefault()">
+        <div class="input-group">
+          <input
+            type="text"
+            [(ngModel)]="userInput"
+            name="message"
+            class="form-control rounded-start-pill"
+            placeholder="Type your message..."
+            required
+          />
+          <button class="btn btn-primary rounded-end-pill px-4" type="submit" [disabled]="loading">
+            <i class="bi bi-send"></i> Send
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
